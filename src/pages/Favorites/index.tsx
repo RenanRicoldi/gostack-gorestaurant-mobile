@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useIsFocused } from '@react-navigation/native';
 import { Image } from 'react-native';
 
 import api from '../../services/api';
@@ -29,12 +30,18 @@ interface Food {
 
 const Favorites: React.FC = () => {
   const [favorites, setFavorites] = useState<Food[]>([]);
+  // const isFocused = useIsFocused();
+
+  async function loadFavorites(): Promise<void> {
+    const response = await api.get<Food[]>('favorites');
+    const serializedData = response.data.map(food => ({
+      ...food,
+      formattedPrice: formatValue(food.price),
+    }));
+    setFavorites(serializedData);
+  }
 
   useEffect(() => {
-    async function loadFavorites(): Promise<void> {
-      // Load favorite foods from api
-    }
-
     loadFavorites();
   }, []);
 
